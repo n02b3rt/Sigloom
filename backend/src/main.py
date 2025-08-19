@@ -1,16 +1,26 @@
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from .settings import settings
 
-app = FastAPI(title="Pico OTA Backend", version="0.1.0")
+app = FastAPI(title="SigLoom Backend", version="0.1.0")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# CORS: na start allow-all; można zawęzić ENV-ami
+if settings.api_cors_allow_all:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+elif settings.api_cors_allow_origins:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.api_cors_allow_origins,
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 MOCK_DEVICES = [
     {"id": "pico-01", "online": True, "app_ver": "1.0.0", "rssi": -55},
