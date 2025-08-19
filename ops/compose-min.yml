@@ -1,0 +1,32 @@
+
+version: '3.9'
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: sigloom-mosquitto
+    restart: unless-stopped
+    ports: ['1883:1883']
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+
+  backend:
+    build: ../backend
+    container_name: sigloom-backend
+    ports: ['8080:8080']
+    environment:
+      - CORS_ALLOW_ORIGINS=*
+    restart: unless-stopped
+    depends_on: [ mosquitto ]
+
+  frontend:
+    build: ../frontend
+    container_name: sigloom-frontend
+    ports: ['3000:3000']
+    environment:
+      - NEXT_PUBLIC_API_BASE=http://backend:8080
+    restart: unless-stopped
+    depends_on: [ backend ]
+
+networks:
+  default:
+    name: sigloom-net

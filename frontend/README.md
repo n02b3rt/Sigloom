@@ -1,0 +1,9 @@
+
+# Frontend (Next.js)
+
+## Dev
+```bash
+npm i
+export NEXT_PUBLIC_API_BASE=http://localhost:8080
+npm run dev
+```
