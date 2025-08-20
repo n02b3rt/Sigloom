@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .settings import settings
+from . import mqtt_client
 
 app = FastAPI(title="SigLoom Backend", version="0.1.0")
 
@@ -26,6 +27,14 @@ MOCK_DEVICES = [
     {"id": "pico-01", "online": True, "app_ver": "1.0.0", "rssi": -55},
     {"id": "pico-02", "online": False, "app_ver": "1.0.0", "rssi": None},
 ]
+
+@app.on_event("startup")
+def _startup():
+    mqtt_client.start()
+
+@app.on_event("shutdown")
+def _shutdown():
+    mqtt_client.stop()
 
 @app.get("/health")
 def health():
